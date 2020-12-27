@@ -63,7 +63,7 @@ class Photo(core_models.TimeStampedModel):
     """Photo model Definition"""
 
     caption = models.CharField(max_length=80)
-    file = models.ImageField()
+    file = models.ImageField(upload_to="room_photos")
     room = models.ForeignKey("Room", related_name="photos", on_delete=models.CASCADE)
 
     def __str__(self):
@@ -100,4 +100,18 @@ class Room(core_models.TimeStampedModel):
     def __str__(self):
         return self.name
 
-    # related_name => room에서 user을 외래키로 사용했지만 user에서도 room_set을 이용해 user의 room정보를 얻을 수 있고 이때 room_set 대신 related_name을 통해 정보를 얻을 수 있다.)
+    def save(self, *args, **kwargs):
+        self.city = str.capitalize(self.city)
+        super().save(*args, **kwargs)
+
+    def total_rating(self):
+        all_reviews = self.reviews.all()
+        all_ratings = 0
+        for review in all_reviews:
+            all_ratings += review.rating_average()
+        if len(all_reviews) == 0:
+            return 0
+
+        return all_ratings / len(all_reviews)
+
+    # related_name => room에서 user을 외래키로 사용지만 user에서도 room_set을 이용해 user의 room정보를 얻을 수 있고 이때 room_set 대신 related_name을 통해 정보를 얻을 수 있다.)
