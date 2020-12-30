@@ -1,8 +1,13 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.views.generic import ListView
 from . import models
 
 
-def all_rooms(request):
-    all_rooms = models.Room.objects.all()
-    return render(request, "rooms/home.html", context={"rooms": all_rooms})
+class HomeView(ListView):
+
+    """ HomeView Defination """
+
+    model = models.Room
+    paginate_by = 10
+    paginate_orphans = 5
+    ordering = "created"
+    context_object_name = "rooms"
