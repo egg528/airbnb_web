@@ -34,7 +34,7 @@ class SignUpForm(forms.ModelForm):
         if password != password1:
             raise forms.ValidationError("Password confirmation does not match")
         else:
-            return password
+            return
 
     def save(self, *args, **kwargs):
         user = super().save(commit=False)
