@@ -121,8 +121,11 @@ class Room(core_models.TimeStampedModel):
     # related_name => room에서 user을 외래키로 사용지만 user에서도 room_set을 이용해 user의 room정보를 얻을 수 있고 이때 room_set 대신 related_name을 통해 정보를 얻을 수 있다.)
 
     def first_photo(self):
-        (photo,) = self.photos.all()[:1]
-        return photo.file.url
+        try:
+            (photo,) = self.photos.all()[:1]
+            return photo.file.url
+        except ValueError:
+            return None
 
     def get_next_four_photos(self):
         photos = self.photos.all()[1:5]

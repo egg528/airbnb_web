@@ -184,9 +184,7 @@ class EditPhotoView(user_mixins.LoggedInOnlyView, SuccessMessageMixin, UpdateVie
 
 class AddPhotoView(user_mixins.LoggedInOnlyView, SuccessMessageMixin, FormView):
 
-    model = models.Photo
     template_name = "rooms/photo_create.html"
-    field = ("caption", "file")
     form_class = forms.CreatePhotoForm
     success_message = "Photo Uploded"
 
@@ -195,3 +193,17 @@ class AddPhotoView(user_mixins.LoggedInOnlyView, SuccessMessageMixin, FormView):
         form.save(pk)
         messages.success(self.request, "Photo Uploded")
         return redirect(reverse("rooms:photos", kwargs={"pk": pk}))
+
+
+class CreateRoomView(user_mixins.LoggedInOnlyView, FormView):
+
+    form_class = forms.CreateRoomForm
+    template_name = "rooms/room_create.html"
+
+    def form_valid(self, form):
+        room = form.save()
+        room.host = self.request.user
+        room.save()
+        form.save_m2m()
+        messages.success(self.request, "Room Uploaded")
+        return redirect(reverse("rooms:detail", kwargs={"pk": room.pk}))
