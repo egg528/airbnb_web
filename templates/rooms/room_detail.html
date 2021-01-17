@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load is_booked %}
+{% load is_booked on_favs i18n %}
 
 {% block page_title %}
     {{room.name}}
@@ -24,10 +24,22 @@
                     <span class="text-gray-700 font-light">{{room.city}}</span>
                 </div>
                 <a href="{{room.host.get_absolute_url}}" class="flex flex-col items-center">
-                    {% include "mixins/user_avatar.html" with user=room.host %}
+                    {% if room.host.avatar %}
+                    <div class="h-20 w-20 bg-gray-700 rounded-full bg-cover bg-center" style="background-image: url({{room.host.avatar.url}});">
+                    {% else %}
+                    <div class="h-20 w-20 bg-gray-700 rounded-full text-white flex justify-center items-center overflow-hidden">
+                        <span class="text-3xl font-bold">{{user_obj.first_name|first}}</span>
+                    {% endif %}
+                    </div>
                     <span class="mt-2 text-gray-500">{{room.host.first_name}}</span>
                 </a>
             </div>
+            {% on_favs room as on_favs_boolean %}
+            {% if on_favs_boolean is None %}
+                <a class="block mb-10 w-1/2 text-teal-600 font-bold" href="{% url 'lists:toggle-room' room.pk %}?action=add">{% trans "Save to Favourites" %}</a>
+            {% else %}
+                <a class="block mb-10 w-1/2 text-teal-600 font-bold" href="{% url 'lists:toggle-room' room.pk %}?action=remove">{% trans "Remove from Favourites" %}</a>
+            {% endif %}
             <div class="flex border-section">
                 <span class="mr-5 font-light">{{room.room_type}}</span>
                 <span class="mr-5 font-light">{{room.beds}} bed{{room.beds|pluralize}}</span>
@@ -109,7 +121,7 @@
                                     {% elif is_booked_bool %}
                                         <span class="cal-number bg-gray-200 text-gray-400 line-through">{{day}}</span>
                                     {% else %}
-                                        <span class="cal-number bg-gray-200 text-gray-700 hover:bg-teal-400 hover:text-white hover:font-medium">{{day}}</span>
+                                    <a href="{% url 'reservations:create' room.pk day.year day.month day.number %}" class="cal-number bg-gray-200 text-gray-700 hover:bg-teal-400 hover:text-white hover:font-medium">{{day}}</a>
                                     {% endif %}
                                 {% else %}
                                   <span></span>

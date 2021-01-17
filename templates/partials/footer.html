@@ -1,3 +1,29 @@
-<footer class="container mx-auto text-center py-10 border-t font-medium text-gray-500">
-    &copy; © 2021 Airbnb, Inc. All rights reserved. Please don't copy me
+{% load i18n %}
+<footer class="container mx-auto text-center py-10 border-t font-medium text-gray-500 ">
+    <div class="flex flex-col">
+        <span>
+            {% trans "Please don't copy us." %}
+        </span>
+        <span>&copy; 2019 Nomad Coders. {% trans "All rights reserved" %}.</span>
+        <div class="w-40 self-center mt-5">
+            {% get_current_language as LANGUAGE_CODE %}
+            <select class="text-black rounded-lg h-2 " id="js-lang">
+                <option class="text-left" value="en"
+                    {% if LANGUAGE_CODE == 'en' %}
+                    selected
+                    {% endif %}
+                >English</option>
+                <option value="es"
+                    {% if LANGUAGE_CODE == 'es' %}
+                        selected
+                    {% endif %}
+                >Spanish</option>
+                <option value="ko"
+                    {% if LANGUAGE_CODE == 'ko' %}
+                        selected
+                    {% endif %}
+                >Korean</option>
+            </select>
+        </div>
+    </div>
 </footer>
